@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  client:
+    build: ./client
+    container_name: client
+    networks:
+      dnsnet:
+        ipv4_address: 192.168.100.2
+    depends_on:
+      - resolver
+      - attacker
+
+  resolver:
+    build: ./resolver
+    container_name: resolver
+    networks:
+      dnsnet:
+        ipv4_address: 192.168.100.52
+
+  attacker:
+    build: ./attacker
+    container_name: attacker
+    cap_add:
+      - NET_RAW
+    networks:
+      dnsnet:
+        ipv4_address: 192.168.100.23
+    environment:
+      - SPOOF_IP
+    volumes:
+      - ./capture/spoof.log:/opt/huntkit/spoof.log
+
+  wireshark:
+    build: ./wireshark
+    container_name: wireshark
+    networks:
+      dnsnet:
+        ipv4_address: 192.168.100.97
+    command: ["tcpdump", "-i", "eth0", "-w", "/capture/capture.pcapng"]
+    volumes:
+      - ./capture:/capture
+
+networks:
+  dnsnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24

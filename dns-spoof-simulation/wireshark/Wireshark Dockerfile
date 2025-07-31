@@ -1,0 +1,5 @@
+FROM ubuntu:20.04
+
+RUN apt update && apt install -y tcpdump
+
+CMD ["tcpdump", "-i", "eth0", "-w", "/capture/capture.pcapng"]

